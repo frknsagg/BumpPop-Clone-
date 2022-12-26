@@ -58,16 +58,16 @@ RectTransform:
   m_GameObject: {fileID: 762349394}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.14866714, y: 0.3543, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 965575822}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -79.656, y: 16.450592}
+  m_SizeDelta: {x: -332.5917, y: -861.3482}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &762349397
 CanvasRenderer:
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 5
+  m_text: 10
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -106,8 +106,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278314271
+  m_fontColor: {r: 0.11985697, g: 0.8962264, b: 0.004227493, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -124,8 +124,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 10
+  m_fontSize: 31.95
+  m_fontSizeBase: 34.55
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 9.572922, y: 2.9859161, z: 166.23174, w: 30.901093}
+  m_margin: {x: 1.2088699, y: -0.45097446, z: 1.9078064, w: 0.35602474}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -294,8 +294,8 @@ Transform:
   m_GameObject: {fileID: 2514430032001987307}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.635, y: 0.635, z: 0.635}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.66, y: 1.02, z: 0.63}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4797423944432958926}
   - {fileID: 1638444958578769476}
@@ -326,8 +326,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.34538847, y: 3.567794, z: 28.847042}
-  m_Center: {x: -20.83, y: 17.53011, z: 4.5385113}
+  m_Size: {x: 13.518302, y: 3.567793, z: 28.84704}
+  m_Center: {x: -23.357222, y: 17.53011, z: 4.5385103}
 --- !u!114 &1022835492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1492b467c4a77e1479eec7d3b9801191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  needToBreakBall: 6
+  needToBreakBall: 50
   ballList: []
   ballCountText: {fileID: 762349396}
   chainList:
@@ -849,7 +849,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 36
   m_CollisionDetection: 0
 --- !u!136 &803603927324569843
 CapsuleCollider:
@@ -999,7 +999,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 36
   m_CollisionDetection: 0
 --- !u!136 &4797423943073974613
 CapsuleCollider:
@@ -1041,7 +1041,7 @@ HingeJoint:
   m_UseLimits: 0
   m_Limits:
     min: 0
-    max: 0
+    max: 10
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -1144,7 +1144,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 36
   m_CollisionDetection: 0
 --- !u!136 &4797423943907896130
 CapsuleCollider:
@@ -1289,7 +1289,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 36
   m_CollisionDetection: 0
 --- !u!136 &4797423943455452230
 CapsuleCollider:
@@ -1434,7 +1434,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 36
   m_CollisionDetection: 0
 --- !u!136 &4797423943590553081
 CapsuleCollider:
@@ -1574,7 +1574,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 36
   m_CollisionDetection: 0
 --- !u!136 &3410703054896637029
 CapsuleCollider:

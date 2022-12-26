@@ -11,8 +11,9 @@ public class ChainController : MonoBehaviour
     public List<GameObject> ballList;
     [SerializeField] private TextMeshProUGUI ballCountText;
     [SerializeField] private List<GameObject> chainList;
+
     public HingeJoint hingeJoint;
-    public GameObject[] cube;
+    // public GameObject[] cube;
 
     void Start()
     {
@@ -25,23 +26,53 @@ public class ChainController : MonoBehaviour
     {
         if (other.CompareTag("Playable"))
         {
+          ImpulseMove(other);
             if (!ballList.Contains(other.gameObject))
             {
                 ballList.Add(other.gameObject);
                 needToBreakBall--;
                 TextChange();
                 ChangeColor();
-                if (needToBreakBall==0)
+                if (needToBreakBall == 0)
                 {
                     hingeJoint.breakForce = 0;
-                    for (int i = 0; i < cube.Length; i++)
-                    {
-                        Destroy(cube[i]);
-                    }
+                    // for (int i = 0; i < cube.Length; i++)
+                    // {
+                    //     Destroy(cube[i]);
+                    // }
+                    ImpulseMove(other);
+                    
                 }
-               
+                
             }
         }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Playable"))
+        {
+           ImpulseMove(other);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Playable"))
+        {
+            other.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+        }
+    }
+
+    void ImpulseMove(Collider other)
+    {
+        var objVelo = other.GetComponent<Rigidbody>().velocity;
+        var vec = (GameManager.Instance.checkPoints[0].position - other.transform.position).normalized;
+        other.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+        objVelo.x = vec.x * 20;
+        objVelo.z = vec.z * 20;
+        objVelo.y = -1f;
+        other.GetComponent<Rigidbody>().velocity = objVelo;
     }
 
     void TextChange()

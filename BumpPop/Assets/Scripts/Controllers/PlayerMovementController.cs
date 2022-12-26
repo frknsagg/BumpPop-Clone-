@@ -1,48 +1,64 @@
-using System.Collections;
 using Signals;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Playables;
+using UnityEngine.Assertions.Must;
+
 
 namespace Controllers
 {
     public class PlayerMovementController : MonoBehaviour
     {
-        [SerializeField] private TouchController touchController;
-        private Vector3 _direction;
         [SerializeField] private Rigidbody rb;
-        [Range(0, 1000)] public int moveSpeed;
-        private RaycastHit _hit;
-        private Quaternion _rotation;
+        [SerializeField] private Transform followTarget;
+        [SerializeField] private LineRenderer arrowLineRenderer;
+        [SerializeField] private LayerMask layerMask;
 
-        [SerializeField] private GameObject ArrowPrefab;
-        [SerializeField] private GameObject[] Arrows;
-        public int numberOfArrows;
-        public GameObject _playableBalls;
-        private float _counter;
+
+        [Range(0, 1000)] public int moveSpeed;
+        private Vector3 _reflectedDirection;
+        private Quaternion _rotation;
+        private float _eulerY;
+        private RaycastHit _hit;
 
 
         void Start()
         {
             _rotation = transform.rotation;
-            Arrows = new GameObject[numberOfArrows];
-
-            for (int i = 0; i < numberOfArrows; i++)
-            {
-                Arrows[i] = Instantiate(ArrowPrefab, transform.position, Quaternion.identity);
-            }
-
-            ChangePlayer(GameManager.Instance.FindPlayableBall());
+            // Position(10, 20, new Vector3(0, 0, 1));
+            ChangePlayer();
         }
 
-        // Update is called once per frame
-        void FixedUpdate()
+        private void FixedUpdate()
         {
-            _direction = new Vector3(touchController.direction.x, 0f, touchController.direction.y);
-            for (int i = 0; i < Arrows.Length; i++)
+            ChangePlayer();
+            CalculateRotation();
+        }
+
+        private void DrawPoints(Vector3 direction)
+        {
+            if (!GameManager.Instance.isShoot)
             {
-                Arrows[i].transform.position = ArrowPosition(i * 0.1f);
-                Arrows[i].transform.rotation = new Quaternion(0, -_direction.x, 0, 1);
+                if (Physics.Raycast(transform.position, transform.TransformDirection(-direction), out _hit, 20,
+                        layerMask))
+                {
+                    Debug.DrawRay(transform.position, transform.TransformDirection(-direction) * _hit.distance,
+                        Color.yellow);
+                    var angle = Vector3.Angle(transform.TransformDirection(-direction), _hit.normal);
+                    _reflectedDirection = Vector3.Reflect(transform.TransformDirection(-direction), _hit.normal);
+                    var distance = 20 - _hit.distance;
+                    Debug.DrawRay(_hit.point, _reflectedDirection * distance, Color.yellow);
+
+                    // Debug.Log(_hit.point.normalized);
+                    arrowLineRenderer.positionCount = 3;
+                    arrowLineRenderer.SetPosition(0, transform.position);
+                    arrowLineRenderer.SetPosition(1, _hit.point);
+                    arrowLineRenderer.SetPosition(2, _hit.point + _reflectedDirection * distance);
+                }
+                else
+                {
+                    arrowLineRenderer.positionCount = 2;
+                    arrowLineRenderer.SetPosition(0, transform.position);
+                    arrowLineRenderer.SetPosition(1, transform.position - direction * 20);
+                }
             }
         }
 
@@ -50,24 +66,29 @@ namespace Controllers
         {
             if (!GameManager.Instance.isShoot)
             {
+                arrowLineRenderer.positionCount = 0;
+                StopCoroutine(GameManager.Instance.StopPlayableBalls());
                 var velo = rb.velocity;
                 velo.x = -vec.x * moveSpeed;
-                velo.z = -vec.y * moveSpeed;
+                velo.z = -vec.z * moveSpeed;
                 rb.velocity = velo;
                 GameManager.Instance.isShoot = true;
+                StartCoroutine(GameManager.Instance.StopPlayableBalls());
             }
         }
 
         void SubscribeEvent()
         {
             PlayerSignals.Instance.OnPointerUp += ImpulseMovement;
-            CoreGameSignals.Instance.OnChangePlayer += ChangePlayer;
+            // CoreGameSignals.Instance.OnChangePlayer += ChangePlayer;
+            InputSignals.Instance.OnDrag += DrawPoints;
         }
 
         private void UnSubscribeEvent()
         {
             PlayerSignals.Instance.OnPointerUp -= ImpulseMovement;
-            CoreGameSignals.Instance.OnChangePlayer -= ChangePlayer;
+            // CoreGameSignals.Instance.OnChangePlayer -= ChangePlayer;
+            InputSignals.Instance.OnDrag -= DrawPoints;
         }
 
         private void OnEnable()
@@ -80,29 +101,26 @@ namespace Controllers
             UnSubscribeEvent();
         }
 
-        Vector3 ArrowPosition(float t)
-        {
-            Vector3 currentPointPos = transform.position +
-                                      (-_direction == Vector3.zero ? transform.forward : -_direction * (5 * t));
-            return currentPointPos;
-        }
-
-        void ChangePlayer(GameObject obj)
-        {
-            rb = obj.GetComponent<Rigidbody>();
-            transform.SetParent(obj.transform);
-            transform.position = obj.transform.position;
-            transform.rotation = _rotation;
-        }
-
-        IEnumerator SetPlayer()
+        // ReSharper disable Unity.PerformanceAnalysis
+        void ChangePlayer()
         {
             var obj = GameManager.Instance.FindPlayableBall();
             rb = obj.GetComponent<Rigidbody>();
-            transform.SetParent(obj.transform);
-            transform.position = obj.transform.position;
-            transform.rotation = _rotation;
-            yield return new WaitForSeconds(0.5f);
+            Transform transform1;
+            (transform1 = transform).SetParent(obj.transform);
+            transform1.position = obj.transform.position;
+            transform1.rotation = _rotation;
+        }
+
+
+        void CalculateRotation()
+        {
+            var velo = rb.velocity;
+            var angle = Mathf.Atan2(velo.x, velo.z) * Mathf.Rad2Deg;
+            _eulerY = Mathf.Lerp(_eulerY, angle, 0.125f);
+            var euler = followTarget.eulerAngles;
+            euler.y = _eulerY;
+            followTarget.eulerAngles = euler;
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Controllers
 {
-    public class TouchController : MonoBehaviour,IDragHandler,IPointerDownHandler,IPointerUpHandler
+    public class TouchController : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
     {
         private Vector2 _touchPosition;
         public Vector2 direction;
@@ -18,30 +18,32 @@ namespace Controllers
         {
             _touchPosition = eventData.position;
         }
-    
+
         public void OnDrag(PointerEventData eventData)
         {
             _counter += Time.deltaTime;
-            if (_counter>0.1f)
+            if (_counter > 0.1f)
             {
                 _isDragged = true;
             }
+
             var delta = eventData.position - _touchPosition;
+
             direction = delta.normalized;
-        
+            var direction2 = new Vector3(direction.x, 0, direction.y);
+            InputSignals.Instance.OnDrag?.Invoke(direction2);
         }
-    
+
         public void OnPointerUp(PointerEventData eventData)
         {
-            
-            
-            if (_isDragged)
-            {
-                PlayerSignals.Instance.OnPointerUp?.Invoke(direction);
-            }
-            _counter = 0;
-            direction = Vector2.zero;
+            var delta = eventData.position - _touchPosition;
+
+            direction = delta.normalized;
+            var direction2 = new Vector3(direction.x, 0, direction.y);
+            PlayerSignals.Instance.OnPointerUp?.Invoke(direction2);
+
+            // _counter = 0;
+            // direction = Vector2.zero;
         }
-    
     }
 }

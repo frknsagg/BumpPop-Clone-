@@ -1,58 +1,59 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Extensions;
 using Signals;
 using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-  public List<GameObject> playableBalls;
-  public bool isShoot;
+    public List<GameObject> playableBalls;
+    public bool isShoot;
+    [SerializeField] public List<Transform> checkPoints;
+    public float lastTempZ;
+    [SerializeField] private GameObject playball;
+    public int nextCheckPoint;
 
-  protected override void Awake()
-  {
-    Application.targetFrameRate = 60;
-    playableBalls.Add(GameObject.FindWithTag("Playable"));
-    StartCoroutine(BallSleepingCheck());
-  }
-  
-  public GameObject FindPlayableBall( )
-  {
-    GameObject obj = null;
-    float tempZ = -50;
-
-    foreach (var item in playableBalls)
+    protected override void Awake()
     {
-      if (tempZ < item.transform.position.z)
-      {
-        if (item.transform.position.z>500 && item.transform.position.z<-50)
+        Application.targetFrameRate = 60;
+        playableBalls.Add(GameObject.FindWithTag("Playable"));
+        playball = FindPlayableBall();
+    }
+
+    public GameObject FindPlayableBall()
+    {
+        foreach (var item in playableBalls)
         {
-          playableBalls.Remove(item.gameObject);
-          Destroy(item.gameObject);
+            var tempZ = Vector3.Distance(checkPoints[0].position, item.transform.position);
+
+            if (tempZ < lastTempZ)
+            {
+                lastTempZ = tempZ;
+                playball = item.gameObject;
+            }
         }
-        tempZ = item.transform.position.z;
-        obj = item.gameObject;
-      }
+
+        return playball;
     }
 
-    return obj;
-  }
-
- public IEnumerator BallSleepingCheck()
-  {
-    yield return new WaitForSeconds(0.5f);
-
-    foreach (var item in playableBalls)
+    public IEnumerator StopPlayableBalls()
     {
-      while (true)
-      {
-        var asl = item.GetComponent<Rigidbody>().IsSleeping();
-        Debug.Log(asl);
-      }
+        while (isShoot)
+        {
+            playball = FindPlayableBall();
+            if (playball.GetComponent<Rigidbody>().IsSleeping())
+            {
+                isShoot = false;
+                StopCoroutine(StopPlayableBalls());
+            }
 
+            yield return new WaitForSeconds(.5f);
+        }
     }
-    CoreGameSignals.Instance.OnChangePlayer?.Invoke(FindPlayableBall());
-    
-  }
+
+    void RemoveCheckPoint()
+    {
+    }
 }
