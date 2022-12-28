@@ -8,5 +8,6 @@ namespace Signals
     {
         public UnityAction<GameObject> OnChangePlayer = delegate { };
         public UnityAction OnLevelFailed = delegate { };
+        public UnityAction<int> OnCloneBall=delegate {  };
     }
 }

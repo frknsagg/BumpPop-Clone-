@@ -55,6 +55,8 @@ namespace Controllers
             obj.gameObject.GetComponent<Rigidbody>().velocity = objVelo;
 
             _clonedBallCount++;
+            GameManager.Instance.BallCount = GameManager.Instance.playableBalls.Count;
+            CoreGameSignals.Instance.OnCloneBall?.Invoke(GameManager.Instance.BallCount);
             if (_clonedBallCount >= ballCount)
             {
                 StopCoroutine(StartClone());

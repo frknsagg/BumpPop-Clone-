@@ -5,18 +5,6 @@ using UnityEngine;
 
 public class FinalCheckPointController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Playable"))
@@ -28,7 +16,6 @@ public class FinalCheckPointController : MonoBehaviour
            velo.x = vec.x * 50;
            velo.z = vec.z * 50;
            velo.y = 0;
-           other.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
            other.gameObject.GetComponent<Rigidbody>().velocity = velo;
         }
     }

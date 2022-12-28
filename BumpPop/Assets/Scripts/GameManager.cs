@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Extensions;
 using Signals;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoSingleton<GameManager>
 {
@@ -14,12 +14,24 @@ public class GameManager : MonoSingleton<GameManager>
     public float lastTempZ;
     [SerializeField] private GameObject playball;
     public int nextCheckPoint;
+    private int ballCount;
+    [SerializeField] private Slider levelProgressBar;
+
+    public int BallCount
+    {
+        get => ballCount;
+        set => ballCount = value;
+    }
+
 
     protected override void Awake()
     {
         Application.targetFrameRate = 60;
         playableBalls.Add(GameObject.FindWithTag("Playable"));
         playball = FindPlayableBall();
+        var distance = Vector3.Distance(playball.transform.position, checkPoints[checkPoints.Count - 2].position);
+        levelProgressBar.maxValue = distance;
+        StartCoroutine(CalculateLevelProgress());
     }
 
     public GameObject FindPlayableBall()
@@ -53,7 +65,22 @@ public class GameManager : MonoSingleton<GameManager>
         }
     }
 
-    void RemoveCheckPoint()
+    IEnumerator CalculateLevelProgress()
     {
+        while (true)
+        {
+            var distance = levelProgressBar.maxValue -
+                           Vector3.Distance(playball.transform.position, checkPoints[^2].position);
+            if (distance > levelProgressBar.maxValue)
+            {
+                levelProgressBar.value = levelProgressBar.maxValue;
+            }
+            else
+            {
+                levelProgressBar.value = distance;
+            }
+
+            yield return new WaitForSeconds(.5f);
+        }
     }
 }
